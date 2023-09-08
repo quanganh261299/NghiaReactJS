@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>All users</title>
+</head>
+<body>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>STT</th>
+                <th>Tên</th>
+                <th>Email</th>
+                <th>Roles</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="user,state : ${users}" >
+                <td th:text="${page.size*(page.number)+(state.index+1)}">1</td>
+                <td>
+                    <a th:href="@{/admin/user/{id}(id=${user.id})}" th:text="${user.name}">SpringBoot - Web Back End</a>
+                </td>
+                <td th:text="${user.email}">'text-warningonlab</td>
+                <td th:text="${user.role}"></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center pagination-sm">
+            <li th:if="${page.totalPages > 0}" class="page-link" th:each="pageNumber : ${pageNumbers}">
+                <a th:href="@{/admin/users?page={pageNum} (pageNum=${pageNumber})}"
+                    th:text= "${pageNumber}"
+                    th:class="${pageNumber == page.number + 1} ? active"
+                    class="page-link"
+                ></a>
+            </li>
+        </ul>
+    </nav>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

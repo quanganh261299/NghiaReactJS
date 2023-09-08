@@ -1,0 +1,9 @@
+.user__table{
+    box-sizing: border-box;
+    padding: 30px;
+    text-align: center;
+}
+
+.user__breadcrumb{
+    padding: 25px;
+}

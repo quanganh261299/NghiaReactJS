@@ -1,0 +1,146 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="en" xmlns:th="https://www.thymeleaf.org"-->
+<!--      th:replace="~{/layout/layout-admin :: main-fragment(~{:: title}, ~{}, ~{:: .content-wrapper}, ~{:: #js})}">-->
+
+<!--<head>-->
+<!--    <title>Tất cả category</title>-->
+<!--</head>-->
+
+<!--<body>-->
+<!--<div class="content-wrapper">-->
+<!--    &lt;!&ndash; Content Header (Page header) &ndash;&gt;-->
+<!--    <div class="content-header">-->
+<!--        <div class="container-fluid">-->
+<!--            <div class="row mb-2">-->
+<!--                <div class="col-sm-12">-->
+<!--                    <ol class="breadcrumb">-->
+<!--                        <li class="breadcrumb-item">-->
+<!--                            <a href="#">Dashboard</a>-->
+<!--                        </li>-->
+<!--                        <li class="breadcrumb-item active">-->
+<!--                            Danh sách category-->
+<!--                        </li>-->
+<!--                    </ol>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+
+<!--    &lt;!&ndash; Main content &ndash;&gt;-->
+<!--    <section class="content">-->
+<!--        <div class="container-fluid">-->
+<!--            <div class="row py-2">-->
+<!--                <div class="col-12">-->
+<!--                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-default">-->
+<!--                        Tạo category-->
+<!--                    </button>-->
+<!--                    <a th:href=$@{/admin/categories}" class="btn btn-info">-->
+<!--                        <i class="fas fa-redo"></i> Refresh-->
+<!--                    </a>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="row">-->
+<!--                <div class="col-6">-->
+<!--                    <div class="card">-->
+<!--                        <div class="card-body">-->
+<!--                            <table class="table table-bordered table-hover">-->
+<!--                                <thead>-->
+<!--                                <tr>-->
+<!--                                    <th>STT</th>-->
+<!--                                    <th>Name</th>-->
+<!--                                    <th></th>-->
+<!--                                </tr>-->
+<!--                                </thead>-->
+<!--                                <tbody>-->
+<!--                                <tr th:each="category,state : ${categoryList}">-->
+<!--                                    <td th:text="${page.size * (page.number) + (state.index + 1)}">1</td>-->
+<!--                                    <td th:text="${category.name}">-->
+<!--                                        Lập trình-->
+<!--                                    </td>-->
+<!--                                    <td>-->
+<!--                                        <button type="button" class="btn btn-warning" data-toggle="modal" th:attr="data-target='|#modal-update-' + ${category.id} + '|'" >-->
+<!--                                            Cập nhật-->
+<!--                                        </button>-->
+<!--                                        <button type="button" class="btn btn-danger" data-toggle="modal" th:attr="data-target='|#modal-delete-' + ${category.id} + '|'" >-->
+<!--                                            Xóa-->
+<!--                                        </button>-->
+<!--                                    </td>-->
+
+<!--                                    &lt;!&ndash; Modal create category&ndash;&gt;-->
+<!--                                    <div class="modal fade" th:id="|modal-update-${category.id}|" style="display: none;" aria-hidden="true">-->
+<!--                                        <div class="modal-dialog">-->
+<!--                                            <div class="modal-content">-->
+<!--                                                <div class="modal-header">-->
+<!--                                                    <h4 class="modal-title">Cập nhật category</h4>-->
+<!--                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">-->
+<!--                                                        <span aria-hidden="true">×</span>-->
+<!--                                                    </button>-->
+<!--                                                </div>-->
+<!--                                                <div class="modal-body">-->
+<!--                                                    <input type="text" class="form-control" th:id="|name-${category.id}|" placeholder="Enter name" th:value="${category.name}">-->
+<!--                                                </div>-->
+<!--                                                <div class="modal-footer justify-content-between">-->
+<!--                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>-->
+<!--                                                    <button type="button" class="btn btn-primary">Lưu</button>-->
+<!--                                                </div>-->
+<!--                                            </div>-->
+
+<!--                                        </div>-->
+
+<!--                                    </div>-->
+
+<!--                                    &lt;!&ndash; Modal delete category&ndash;&gt;-->
+<!--                                    <div class="modal fade" th:id="|modal-delete-${category.id}|" style="display: none;" aria-hidden="true">-->
+<!--                                        <div class="modal-dialog">-->
+<!--                                            <div class="modal-content">-->
+<!--                                                <div class="modal-body">-->
+<!--                                                    <p>Bạn có muốn xóa <span th:text="${category.name}" class="text-danger"></span> không?</p>-->
+<!--                                                </div>-->
+<!--                                                <div class="modal-footer justify-content-end">-->
+<!--                                                    <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>-->
+<!--                                                    <button type="button" class="btn btn-primary">Xác nhận</button>-->
+<!--                                                </div>-->
+<!--                                            </div>-->
+
+<!--                                        </div>-->
+
+<!--                                    </div>-->
+<!--                                </tr>-->
+<!--                                </tbody>-->
+<!--                            </table>-->
+
+<!--                            &lt;!&ndash;Pagination&ndash;&gt;-->
+
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </section>-->
+
+<!--    &lt;!&ndash; Modal create category&ndash;&gt;-->
+<!--    <div class="modal fade" id="modal-default" style="display: none;" aria-hidden="true">-->
+<!--        <div class="modal-dialog">-->
+<!--            <div class="modal-content">-->
+<!--                <div class="modal-header">-->
+<!--                    <h4 class="modal-title">Tạo category</h4>-->
+<!--                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">-->
+<!--                        <span aria-hidden="true">×</span>-->
+<!--                    </button>-->
+<!--                </div>-->
+<!--                <div class="modal-body">-->
+<!--                    <input type="text" class="form-control" id="name" placeholder="Enter name">-->
+<!--                </div>-->
+<!--                <div class="modal-footer justify-content-between">-->
+<!--                    <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>-->
+<!--                    <button type="button" class="btn btn-primary">Lưu</button>-->
+<!--                </div>-->
+<!--            </div>-->
+
+<!--        </div>-->
+
+<!--    </div>-->
+<!--</div>-->
+<!--</body>-->
+
+<!--</html>-->

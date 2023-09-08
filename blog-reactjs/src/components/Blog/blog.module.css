@@ -1,0 +1,9 @@
+.category__breadcrumb{
+    padding: 25px;
+}
+
+.category__table{
+    box-sizing: border-box;
+    padding: 20px 30px;
+    text-align: center;
+}

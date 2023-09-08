@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"
+      th:replace="~{/layout/layout-admin :: main-fragment(~{:: title}, ~{}, ~{:: .content-wrapper}, ~{:: #javascript})}">
+
+<head>
+    <title>Danh mục</title>
+</head>
+
+<body>
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-12">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="#">Dashboard</a>
+                        </li>
+                        <li class="breadcrumb-item active">
+                            Tất cả danh mục
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row py-2">
+                <div class="col-12">
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalCreateCategory">
+                        <i class="fas fa-plus"></i> Tạo danh mục
+                    </button>
+                    <a th:href="@{/admin/categories}" class="btn btn-info">
+                        <i class="fas fa-redo"></i> Refresh
+                    </a>
+                </div>
+            </div>
+
+            <!-- Modal Create Category -->
+            <div class="modal fade" id="modalCreateCategory">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Tạo danh mục</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <input type="text" class="form-control" id="input-create" placeholder="Enter name">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                            <button type="button" class="btn btn-primary" id="btn-create-category">Xác nhận</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Update Category -->
+            <div class="modal fade" id="modalUpdateCategory">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title fs-5">Cập nhật danh mục</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <input type="text" class="form-control" id="input-update" placeholder="Enter name">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                            <button type="button" class="btn btn-primary" id="btn-update-category">Xác nhận</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <table class="table table-bordered table-hover">
+                                <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Danh mục</th>
+                                    <th>Chức năng</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <th:block th:with="categoryList = ${page.getContent()}">
+                                    <tr th:each="category, state : ${categoryList}">
+                                        <td th:text="${(currentPage - 1) * page.getSize() + (state.index + 1)}">1</td>
+                                        <td th:text="${category.name}">Backend</td>
+                                        <td>
+                                            <button class="btn btn-warning"
+                                                    th:onclick="|openModalUpdate(${category.id})|">Sửa
+                                            </button>
+                                            <button class="btn btn-danger"
+                                                    th:onclick="|deleteCategory(${category.id})|">Xóa
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </th:block>
+                                </tbody>
+                            </table>
+
+                            <nav aria-label="Page navigation example">
+                                <ul class="pagination justify-content-center pagination-sm">
+                                    <li th:if="${page.totalPages > 0}" class="page-link" th:each="pageNumber : ${pageNumbers}">
+                                        <a th:href="@{/admin/categories?page={pageNum} (pageNum=${pageNumber})}"
+                                           th:text= "${pageNumber}"
+                                           th:class="${pageNumber == page.number + 1} ? active"
+                                           class="page-link"
+                                        ></a>
+                                    </li>
+                                </ul>
+                            </nav>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<th:block id="javascript">
+    <script th:inline="javascript">
+        let categoryList = [[${page.getContent()}]];
+
+        // // Render Topic
+        // const tableContent = document.querySelector("tbody")
+        // const renderCategoies = categoryList => {
+        //     tableContent.innerHTML = "";
+        //     let html = "";
+        //     categoryList.forEach((category, index) => {
+        //         html += `
+        //             <tr>
+        //                 <td>${index + 1}</td>
+        //                 <td>${category.name}</td>
+        //                 <td>
+        //                     <button class="btn btn-warning" onclick="openModalUpdate(${category.id})">Edit</button>
+        //                     <button class="btn btn-danger" onclick="deleteCategory(${category.id})">Delete</button>
+        //                 </td>
+        //             </tr>
+        //         `
+        //     })
+        //     tableContent.innerHTML = html;
+        // }
+
+        // Tạo chủ đề
+        const btnCreateCateogry = document.getElementById("btn-create-category");
+        const inputCreateEl = document.getElementById("input-create");
+        btnCreateCateogry.addEventListener("click", async () => {
+            try {
+                const name = inputCreateEl.value;
+                if (!name || name === "") {
+                    toastr.error("Tên chủ đề không được để trống")
+                    return
+                }
+
+                let res = await axios.post("/api/v1/admin/categories", { name })
+                if(res.status === 200 || res.status === 201) {
+                    // categoryList.push(res.data)
+                    // renderCategoies(categoryList)
+                    $("#modalCreateCategory").modal("hide")
+                    toastr.success("Tạo thành công")
+                    setTimeout(() => {
+                        window.location.href = "/admin/categories";
+                    }, 1500)
+                }
+            } catch (e) {
+                toastr.error(e.response.data.message);
+                console.log(e);
+            }
+        })
+
+        // Cập nhật chủ đề
+        let idCategoryUpdate = null;
+        const btnUpdateCategory = document.getElementById("btn-update-category");
+        const inputUpdateEl = document.getElementById("input-update");
+
+        $('#modalUpdateCategory').on('hidden.bs.modal', function (event) {
+            idCategoryUpdate = null;
+        })
+
+        const openModalUpdate = (id) => {
+            const category = categoryList.find(c => c.id === id)
+            inputUpdateEl.value = category.name
+            idCategoryUpdate = category.id;
+            $("#modalUpdateCategory").modal("show")
+        }
+
+        btnUpdateCategory.addEventListener("click", async () => {
+            try {
+                const name = inputUpdateEl.value;
+                if (!name || name === "") {
+                    toastr.error("Tên chủ đề không được để trống")
+                    return
+                }
+
+                let res = await axios.put(`/api/v1/admin/categories/${idCategoryUpdate}`, { name })
+
+                if(res.status === 200) {
+                    const category = categoryList.find(c => c.id === idCategoryUpdate)
+                    category.name = res.data.name
+                    // renderCategoies(categoryList)
+                    $("#modalUpdateCategory").modal("hide")
+                    idCategoryUpdate = null;
+                    toastr.success("Cập nhật thành công")
+                    setTimeout(() => {
+                        window.location.href = "/admin/categories";
+                    }, 500)
+                }
+            } catch (e) {
+                toastr.error(e.response.data.message);
+                console.log(e);
+            }
+        })
+
+        // Xóa
+        const deleteCategory = async (id) => {
+            const isConfirm = window.confirm("Bạn có muốn xóa không")
+            if (isConfirm) {
+                try {
+                    let res = await axios.delete(`/api/v1/admin/categories/${id}`)
+
+                    if(res.status === 200 || res.status === 204) {
+                        // categoryList = categoryList.filter(c => c.id !== id)
+                        // renderCategoies(categoryList)
+                        toastr.success("Xóa thành công")
+                        setTimeout(() => {
+                            window.location.href = "/admin/categories";
+                        }, 500)
+                    }
+                } catch (e) {
+                    toastr.error(e.response.data.message);
+                    console.log(e);
+                }
+            }
+        }
+    </script>
+</th:block>
+</body>
+
+</html>

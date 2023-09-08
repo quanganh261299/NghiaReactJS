@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org"  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{/layout/layout-admin :: main-fragment(~{:: title}, ~{:: #css}, ~{:: .content-wrapper}, ~{:: #js})}">
+
+<head>
+    <title>AdminLTE 3 | Dashboard</title>
+
+    <th:block id="css">
+        <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css"/>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/highlight.js/latest/styles/github.min.css"/>
+
+        <link rel="stylesheet" th:href="@{/admin-lte/plugins/select2/css/select2.min.css}"/>
+        <link rel="stylesheet" th:href="@{/admin-lte/dist/css/style.css}">
+    </th:block>
+</head>
+
+<body>
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-12">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="#">Dashboard</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a th:href="@{/admin/blogs}">Blog</a>
+                        </li>
+                        <li class="breadcrumb-item active" th:text="${blog.title}">
+                            Thực hành làm ứng dụng Meal Finder API
+                            với Javascript (Phần 2)
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row py-2">
+                <div class="col-6">
+                    <button type="button" class="btn btn-default">
+                        <a th:href="@{/admin/blogs}" ><i class="fas fa-chevron-left"></i><span>Quay lại</span></a>
+                    </button>
+                    <button type="button" class="btn btn-info px-4" id="btn-update">
+                        Lưu
+                    </button>
+<!--                    <button type="button" class="btn btn-primary px-4">-->
+<!--                        Preview-->
+<!--                    </button>-->
+                </div>
+
+                <div class="col-6 d-flex justify-content-end">
+                    <button type="button" class="btn btn-danger px-4">
+                        Xóa
+                    </button>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <label>Tiêu đề</label><span class="invalid-feedback" id="invalid-feedback-title"> (*) Độ dài tiêu đề từ 1 - 300 ký tự</span>
+                                        <input type="text" class="form-control" id="title"/>
+
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Nội dung</label> <span class="invalid-feedback" id="invalid-feedback-content"> (*) Content không được bỏ trống</span>
+                                        <textarea id="content"></textarea>
+
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>Mô tả ngắn</label><span class="invalid-feedback" id="invalid-feedback-description"> (*) Mô tả không được bỏ trống</span>
+                                        <textarea id="description" class="form-control" rows="3"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label>Trạng thái</label>
+                                        <select id="status" class="form-control">
+                                            <option value="0">
+                                                Nháp
+                                            </option>
+                                            <option value="1">
+                                                Công khai
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Danh mục</label>
+                                        <div class="select2-purple">
+                                            <select class="select2 form-control" multiple="multiple" id="category">
+                                                <option th:each="category : ${categoryList}"
+                                                        th:value="${category.id}"
+                                                        th:text="${category.name}">
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="modal fade" id="modal-xl" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Extra Large Modal</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>One fine body…</p>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                        Close
+                    </button>
+                    <button type="button" class="btn btn-primary">
+                        Save changes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block id="js">
+    <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/highlight.js/latest/highlight.min.js"></script>
+
+    <script th:src="@{/admin-lte/plugins/select2/js/select2.full.min.js}"></script>
+
+    <script th:inline="javascript">
+        // Lấy thông tin trả về từ backend để sử dụng trong javascript
+        let blog = [[${blog}]];
+        console.log(blog);
+
+        let categoies = [[${categoryList}]];
+        console.log(categoies);
+
+
+        //Initialize Select2 Elements
+        $(".select2").select2();
+
+        // Initialize editor
+        const easyMDE = new EasyMDE({
+            element: document.getElementById("content"),
+            spellChecker: false,
+            maxHeight: "500px",
+            renderingConfig: {
+                codeSyntaxHighlighting: true,
+            },
+        });
+
+        // Initialize data
+        const titleEl = document.getElementById("title")
+        const descriptionEl = document.getElementById("description")
+        const statusEl = document.getElementById("status")
+        const categoryEl = $("#category");
+
+        const initData = (data) => {
+            $("#title").val(data.title);
+            easyMDE.value(data.content);
+            $("#description").html(data.description);
+            $("#status").val(data.status);
+            $("#category").val(data.categories.map(e => e.id)).trigger("change");
+            // $("#thumbnail").attr("src", data.thumbnail);
+        };
+
+        initData(blog);
+
+
+        // Cập nhật blog
+        const btnUpdate = document.getElementById("btn-update")
+        btnUpdate.addEventListener("click", async () => {
+            try {
+                // Lấy dữ liệu
+                const title = titleEl.value;
+                const content = easyMDE.value();
+                const description = descriptionEl.value;
+                const status = statusEl.value;
+                const categoryIds = categoryEl.val();
+
+                isValid = true;
+
+                if (title.length < 5 || title.length > 300) {
+                    $('#invalid-feedback-title').show();
+                    isValid = false;
+                }
+                if (content.length == 0) {
+                    $('#invalid-feedback-content').show();
+                    isValid = false;
+                }
+                if (description.length == 0) {
+                    $('#invalid-feedback-description').show();
+                    isValid = false;
+                }
+
+                const request = {
+                    title,
+                    content,
+                    description,
+                    status: status === "1" ? 1 : 0,
+                    categoryIds: categoryIds.map(id => parseInt(id)),
+                };
+                console.log(request);
+
+                if (isValid) {
+                    const dataJson = await fetch("/api/v1/admin/blogs/" + blog.id, {
+                        method: "PUT",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(request)
+                    })
+                    const data = await dataJson.json();
+                    window.location.href = "/admin/blogs/own-blogs";
+                    window.alert("Cập nhật thành công");
+                    toastr.success("Cập nhật thành công");
+                }
+                // Gọi API
+                // const dataJson = await fetch("/api/v1/admin/blogs/" + blog.id, {
+                //     method: "PUT",
+                //     headers: {
+                //         "Content-Type": "application/json"
+                //     },
+                //     body: JSON.stringify(request)
+                // })
+                // const data = await dataJson.json();
+                // window.location.href = "/admin/blogs"
+                // toastr.success("Cập nhật thành công");
+
+            } catch (err) {
+                console.log(err.response.data.message);
+                window.alert(err.response.data.message);
+                toastr.warning(err)
+            }
+        })
+    </script>
+</th:block>
+
+</body>
+
+</html>
